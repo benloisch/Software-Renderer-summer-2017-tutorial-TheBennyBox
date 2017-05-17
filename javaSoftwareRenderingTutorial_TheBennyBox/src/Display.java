@@ -46,4 +46,8 @@ public class Display extends Canvas {
         m_graphics.drawImage(m_displayImage, 0, 0, m_frameBuffer.GetWidth(), m_frameBuffer.GetHeight(), null);
         m_BufferStrategy.show();
     }
+
+    public Bitmap GetFrameBuffer() {
+        return m_frameBuffer;
+    }
 }
