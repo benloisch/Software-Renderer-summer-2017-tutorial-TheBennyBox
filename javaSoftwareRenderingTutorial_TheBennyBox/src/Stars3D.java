@@ -22,14 +22,22 @@ public class Stars3D {
         }
     }
 
+    //take existing star and place at random new coordinates
+    //-1<x<1
+    //-1<y<1
+    //0<z<1
     private void InitStar(int index) {
         m_starX[index] = ((float)Math.random() - 0.5f) * 2 * m_spread;
         m_starY[index] = ((float)Math.random() - 0.5f) * 2 * m_spread;
         m_starZ[index] = ((float)Math.random() + 0.00001f) * m_spread;
     }
 
-    public void UpdateAndRender(Bitmap target, float delta) {
+    public void UpdateAndRender(Bitmap target, float delta)     {
         target.Clear((byte)0x00);
+
+        double theta = 70.0; //degrees
+        theta /= 2.0;
+        double tan = Math.tan(theta);
 
         float halfWidth = target.GetWidth() / 2.0f;
         float halfHeight = target.GetHeight() / 2.0f;
@@ -40,9 +48,11 @@ public class Stars3D {
                 InitStar(i);
             }
 
-            int x = (int)((m_starX[i]/m_starZ[i]) * halfWidth + halfWidth);
-            int y = (int)((m_starY[i]/m_starZ[i]) * halfHeight + halfHeight);
+            //    =        divide by z coord       convert to screen space
+            int x = (int)((m_starX[i]/(m_starZ[i] * tan)) * halfWidth + halfWidth);
+            int y = (int)((m_starY[i]/(m_starZ[i] * tan)) * halfHeight + halfHeight);
 
+            //if outside of screen space, InitStar()
             if (x < 0 || x >= target.GetWidth() || y < 0 || y >= target.GetHeight()) {
                 InitStar(i);
             } else {
