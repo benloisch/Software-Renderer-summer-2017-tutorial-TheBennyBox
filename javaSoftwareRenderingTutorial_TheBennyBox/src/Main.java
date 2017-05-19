@@ -8,7 +8,7 @@ public class Main {
         Stars3D stars = new Stars3D(4096, 64.0f, 20.0f);
 
         Vertex minYVert = new Vertex(100, 100);
-        Vertex midYVert = new Vertex(150, 200);
+        Vertex midYVert = new Vertex(150, 0);
         Vertex maxYVert = new Vertex(80, 300);
 
         long previousTime = System.nanoTime();
@@ -27,10 +27,13 @@ public class Main {
                 target.DrawScanBuffer(j, 300 - j, 300 + j);
             } */
 
-            target.ScanConvertTriangle(minYVert, midYVert, maxYVert, 0);
+            //fill m_scanBuffer x-values with edges created by these three vertices
+            //target.ScanConvertTriangle(minYVert, midYVert, maxYVert, 0);
 
             //draw between yMin and yMax
-            target.FillShape(100, 300);
+            //target.FillShape(100, 300);
+
+            target.FillTriangle(maxYVert, midYVert, minYVert);
 
             display.SwapBuffers();
         }

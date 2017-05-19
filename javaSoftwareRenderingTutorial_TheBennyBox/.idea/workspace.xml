@@ -39,12 +39,27 @@
       <file leaf-file-name="RenderContext.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/RenderContext.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="407">
-              <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
+            <state relative-caret-position="120">
+              <caret line="31" column="62" selection-start-line="31" selection-start-column="62" selection-end-line="31" selection-end-column="62" />
               <folding>
                 <element signature="method#RenderContext#0;class#RenderContext#0" expanded="false" />
                 <element signature="method#DrawScanBuffer#0;class#RenderContext#0" expanded="false" />
                 <element signature="method#FillShape#0;class#RenderContext#0" expanded="false" />
+                <element signature="method#FillTriangle#0;class#RenderContext#0" expanded="false" />
+                <element signature="method#ScanConvertTriangle#0;class#RenderContext#0" expanded="false" />
+                <element signature="method#ScanConvertLine#0;class#RenderContext#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Vertex.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/Vertex.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding>
+                <element signature="method#Vertex#0;class#Vertex#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -67,8 +82,8 @@
       <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="70" />
+            <state relative-caret-position="595">
+              <caret line="35" column="60" selection-start-line="35" selection-start-column="60" selection-end-line="35" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -94,9 +109,9 @@
         <option value="$PROJECT_DIR$/src/Bitmap.java" />
         <option value="$PROJECT_DIR$/src/Stars3D.java" />
         <option value="$PROJECT_DIR$/src/Display.java" />
-        <option value="$PROJECT_DIR$/src/RenderContext.java" />
         <option value="$PROJECT_DIR$/src/Vertex.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/RenderContext.java" />
       </list>
     </option>
   </component>
@@ -528,6 +543,9 @@
             <element signature="method#RenderContext#0;class#RenderContext#0" expanded="false" />
             <element signature="method#DrawScanBuffer#0;class#RenderContext#0" expanded="false" />
             <element signature="method#FillShape#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#FillTriangle#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#ScanConvertTriangle#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#ScanConvertLine#0;class#RenderContext#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -620,14 +638,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Vertex.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="36" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Display.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="322">
@@ -640,22 +650,35 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Vertex.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="method#Vertex#0;class#Vertex#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="70" />
+        <state relative-caret-position="595">
+          <caret line="35" column="60" selection-start-line="35" selection-start-column="60" selection-end-line="35" selection-end-column="60" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/RenderContext.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="407">
-          <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
+        <state relative-caret-position="120">
+          <caret line="31" column="62" selection-start-line="31" selection-start-column="62" selection-end-line="31" selection-end-column="62" />
           <folding>
             <element signature="method#RenderContext#0;class#RenderContext#0" expanded="false" />
             <element signature="method#DrawScanBuffer#0;class#RenderContext#0" expanded="false" />
             <element signature="method#FillShape#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#FillTriangle#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#ScanConvertTriangle#0;class#RenderContext#0" expanded="false" />
+            <element signature="method#ScanConvertLine#0;class#RenderContext#0" expanded="false" />
           </folding>
         </state>
       </provider>

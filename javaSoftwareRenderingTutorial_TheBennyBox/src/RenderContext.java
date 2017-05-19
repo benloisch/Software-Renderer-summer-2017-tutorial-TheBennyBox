@@ -29,6 +29,39 @@ public class RenderContext extends Bitmap{
         }
     }
 
+    public void FillTriangle(Vertex v1, Vertex v2, Vertex v3) {
+        Vertex minYVert = v1;
+        Vertex midYVert = v2;
+        Vertex maxYVert = v3;
+
+        if (maxYVert.GetY() < midYVert.GetY()) {
+            Vertex temp = maxYVert;
+            maxYVert = midYVert;
+            midYVert = temp;
+        }
+
+        if (midYVert.GetY() < minYVert.GetY()) {
+            Vertex temp = midYVert;
+            midYVert = minYVert;
+            minYVert = temp;
+        }
+
+        if (maxYVert.GetY() < midYVert.GetY()) {
+            Vertex temp = maxYVert;
+            maxYVert = midYVert;
+            midYVert = temp;
+        }
+
+        float area = minYVert.TriangleArea(maxYVert, midYVert);
+        int handedness = area >= 0 ? 1 : 0; //if area >= 0, set to 1
+
+        //fill m_scanBuffer x-values with edges created by these three vertices
+        ScanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
+
+        //draw between yMin and yMax
+        FillShape((int)minYVert.GetY(), (int)maxYVert.GetY());
+    }
+
     //handedness = 0, draw into min part of m_scanBuffer
     //handedness = 1, draw into max part of m_scanBuffer
     public void ScanConvertTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, int handedness) {
@@ -37,7 +70,7 @@ public class RenderContext extends Bitmap{
         ScanConvertLine(midYVert, maxYVert, 1 - handedness);
     }
 
-    //use Bresenham's line algorithm to define edge of triangle (with x-values in m_scanBuffer[])
+    //use Bresenham's line algorithm to define edge of triangle (putting x-values in m_scanBuffer[])
     private void ScanConvertLine(Vertex minYVert, Vertex maxYVert, int whichSide) {
         int yStart = (int)minYVert.GetY();
         int yEnd = (int)maxYVert.GetY();
