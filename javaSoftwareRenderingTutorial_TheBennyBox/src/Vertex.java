@@ -2,26 +2,29 @@
  * Created by Ben Loisch on 5/18/2017.
  */
 public class Vertex {
-    private float m_x;
-    private float m_y;
+    private Vector4f m_pos;
 
-    public float GetX() { return m_x; }
-    public float GetY() { return m_y; }
-
-    public void SetX(float x) { m_x = x; }
-    public void SetY(float y) { m_y = y; }
+    public float GetX() { return m_pos.GetX(); }
+    public float GetY() { return m_pos.GetY(); }
 
     Vertex(float x, float y) {
-        m_x = x;
-        m_y = y;
+        m_pos = new Vector4f(x, y, 0, 1);
+    }
+
+    Vertex(Vector4f pos) {
+        m_pos = pos;
+    }
+
+    public Vertex Transform(Matrix4f transform) {
+        return new Vertex(transform.Transform(m_pos));
     }
 
     public float TriangleArea(Vertex b, Vertex c) {
-        float x1 = b.GetX() - m_x;
-        float y1 = b.GetY() - m_y;
+        float x1 = b.GetX() - m_pos.GetX();
+        float y1 = b.GetY() - m_pos.GetY();
 
-        float x2 = c.GetX() - m_x;
-        float y2 = c.GetY() - m_y;
+        float x2 = c.GetX() - m_pos.GetX();
+        float y2 = c.GetY() - m_pos.GetY();
 
         return ((x1 * y2) - (x2 * y1));
     }
