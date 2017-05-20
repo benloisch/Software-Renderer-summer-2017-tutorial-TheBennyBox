@@ -30,9 +30,11 @@ public class RenderContext extends Bitmap{
     }
 
     public void FillTriangle(Vertex v1, Vertex v2, Vertex v3) {
-        Vertex minYVert = v1;
-        Vertex midYVert = v2;
-        Vertex maxYVert = v3;
+        Matrix4f screenSpaceTransform = new Matrix4f().InitScreenSpaceTransform(GetWidth()/2.0f, GetHeight()/2.0f);
+
+        Vertex minYVert = v1.Transform(screenSpaceTransform).PersepctiveDivide();
+        Vertex midYVert = v2.Transform(screenSpaceTransform).PersepctiveDivide();
+        Vertex maxYVert = v3.Transform(screenSpaceTransform).PersepctiveDivide();
 
         if (maxYVert.GetY() < midYVert.GetY()) {
             Vertex temp = maxYVert;

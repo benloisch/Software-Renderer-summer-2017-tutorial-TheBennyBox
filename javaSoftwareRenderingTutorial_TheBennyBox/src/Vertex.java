@@ -11,12 +11,27 @@ public class Vertex {
         m_pos = new Vector4f(x, y, 0, 1);
     }
 
+    Vertex(float x, float y, float z, float w) {
+        m_pos = new Vector4f(x, y, z, w);
+    }
+
+    Vertex(float x, float y, float z) {
+        m_pos = new Vector4f(x, y, z, 1);
+    }
+
     Vertex(Vector4f pos) {
         m_pos = pos;
     }
 
     public Vertex Transform(Matrix4f transform) {
         return new Vertex(transform.Transform(m_pos));
+    }
+
+    public Vertex PersepctiveDivide() {
+        return new Vertex(m_pos.GetX()/m_pos.GetW(),
+                m_pos.GetY()/m_pos.GetW(),
+                m_pos.GetZ()/m_pos.GetW(),
+                m_pos.GetW());
     }
 
     public float TriangleArea(Vertex b, Vertex c) {
