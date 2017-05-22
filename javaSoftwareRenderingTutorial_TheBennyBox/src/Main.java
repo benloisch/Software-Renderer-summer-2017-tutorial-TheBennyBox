@@ -22,6 +22,7 @@ public class Main {
             previousTime = currentTime;
 
             rotCounter += delta;
+            //Matrix4f transform = World(trans, rot, scale) * View(no cam right now) * Projection
             Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f);
             Matrix4f rotation = new Matrix4f().InitRotation(0.0f, rotCounter, 0.0f);
             Matrix4f transform = projection.Mul(translation.Mul(rotation));

@@ -32,6 +32,8 @@ public class RenderContext extends Bitmap{
     public void FillTriangle(Vertex v1, Vertex v2, Vertex v3) {
         Matrix4f screenSpaceTransform = new Matrix4f().InitScreenSpaceTransform(GetWidth()/2.0f, GetHeight()/2.0f);
 
+        //v1,v2, and v3 are in NDC space
+        //we must still divide by w (PerspectiveDivide()) and then convert to screen space
         Vertex minYVert = v1.Transform(screenSpaceTransform).PersepctiveDivide();
         Vertex midYVert = v2.Transform(screenSpaceTransform).PersepctiveDivide();
         Vertex maxYVert = v3.Transform(screenSpaceTransform).PersepctiveDivide();
@@ -61,7 +63,7 @@ public class RenderContext extends Bitmap{
         ScanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
 
         //draw between yMin and yMax
-        FillShape((int)minYVert.GetY(), (int)maxYVert.GetY());
+        FillShape((int)Math.ceil(minYVert.GetY()), (int)Math.ceil(maxYVert.GetY()));
     }
 
     //handedness = 0, draw into min part of m_scanBuffer
@@ -74,24 +76,25 @@ public class RenderContext extends Bitmap{
 
     //use Bresenham's line algorithm to define edge of triangle (putting x-values in m_scanBuffer[])
     private void ScanConvertLine(Vertex minYVert, Vertex maxYVert, int whichSide) {
-        int yStart = (int)minYVert.GetY();
-        int yEnd = (int)maxYVert.GetY();
-        int xStart = (int)minYVert.GetX();
-        int xEnd = (int)maxYVert.GetX();
+        int yStart = (int)Math.ceil(minYVert.GetY());
+        int yEnd = (int)Math.ceil(maxYVert.GetY());
+        int xStart = (int)Math.ceil(minYVert.GetX());
+        int xEnd = (int)Math.ceil(maxYVert.GetX());
 
-        int yDist = yEnd - yStart;
-        int xDist = xEnd - xStart;
+        float yDist = maxYVert.GetY() - minYVert.GetY();
+        float xDist = maxYVert.GetX() - minYVert.GetX();
 
         if (yDist <= 0)
             return;
 
         float xStep = (float)xDist / (float)yDist;
-        float curX = (float)xStart;
+        float yPreStep = yStart - minYVert.GetY();
+        float curX = minYVert.GetX() + yPreStep * xStep;
 
         for (int j = yStart; j < yEnd; j++) {
             //if whichSide = 0, write to min part of scan buffer
             //if whichSide = 1, write to max part of scan buffer
-            m_scanBuffer[j * 2 + whichSide] = (int)curX;
+            m_scanBuffer[j * 2 + whichSide] = (int)Math.ceil(curX);
             curX += xStep;
         }
     }
