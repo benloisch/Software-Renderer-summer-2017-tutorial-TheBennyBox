@@ -110,7 +110,7 @@ public class RenderContext extends Bitmap{
         }
     }
 
-    private void DrawScanLine(Edge left, Edge right, int j) {
+    private void DrawScanLine(Edge left, Edge right, int j)  {
         int xMin = (int)Math.ceil(left.GetX());
         int xMax = (int)Math.ceil(right.GetX());
 
