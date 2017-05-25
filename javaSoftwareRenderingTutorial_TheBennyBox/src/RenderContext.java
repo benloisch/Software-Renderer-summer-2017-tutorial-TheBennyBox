@@ -29,7 +29,7 @@ public class RenderContext extends Bitmap{
         }
     }
 
-    public void FillTriangle(Vertex v1, Vertex v2, Vertex v3) {
+    public void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
         Matrix4f screenSpaceTransform = new Matrix4f().InitScreenSpaceTransform(GetWidth()/2.0f, GetHeight()/2.0f);
 
         //v1,v2, and v3 are in NDC space
@@ -57,7 +57,7 @@ public class RenderContext extends Bitmap{
         }
 
         ScanTriangle(minYVert, midYVert, maxYVert,
-                minYVert.TriangleArea(maxYVert, midYVert) >= 0);
+                minYVert.TriangleArea(maxYVert, midYVert) >= 0, texture);
         //float area = minYVert.TriangleArea(maxYVert, midYVert);
         //int handedness = area >= 0 ? 1 : 0; //if area >= 0, set to 1
 
@@ -70,7 +70,7 @@ public class RenderContext extends Bitmap{
 
     //handedness = 0, draw into min part of m_scanBuffer
     //handedness = 1, draw into max part of m_scanBuffer
-    private void ScanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness) {
+    private void ScanTriangle(Vertex minYVert, Vertex midYVert, Vertex maxYVert, boolean handedness, Bitmap texture) {
         Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
         Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
         Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
@@ -88,7 +88,7 @@ public class RenderContext extends Bitmap{
         int yEnd = topToMiddle.GetYEnd();
 
         for (int j = yStart; j < yEnd; j++) {
-            DrawScanLine(left, right, j);
+            DrawScanLine(gradients, left, right, j, texture);
             left.Step();
             right.Step();
         }
@@ -105,30 +105,47 @@ public class RenderContext extends Bitmap{
         yEnd = middleToBottom.GetYEnd();
 
         for (int j = yStart; j < yEnd; j++) {
-            DrawScanLine(left, right, j);
+            DrawScanLine(gradients, left, right, j, texture);
             left.Step();
             right.Step();
         }
     }
 
-    private void DrawScanLine(Edge left, Edge right, int j)  {
+    private void DrawScanLine(Gradients gradients, Edge left, Edge right, int j, Bitmap texture)  {
         int xMin = (int)Math.ceil(left.GetX());
         int xMax = (int)Math.ceil(right.GetX());
-        Vector4f minColor = left.GetColor();
-        Vector4f maxColor = right.GetColor();
+        float xPrestep = xMin - left.GetX();
+        //Vector4f minColor = left.GetColor();
+        //Vector4f maxColor = right.GetColor();
 
-        float lerpAmt = 0.0f;
-        float lerpStep = 1.0f / (float)(xMax - xMin);
+        float texCoordX = left.GetTexCoordX() + gradients.GetTexCoordXXStep() * xPrestep;
+        float texCoordY = left.GetTexCoordY() + gradients.GetTexCoordYXStep() * xPrestep;
+
+
+
+        //float lerpAmt = 0.0f;
+        //float lerpStep = 1.0f / (float)(xMax - xMin);
 
         for (int i = xMin; i < xMax; i++) {
-            Vector4f color = minColor.Lerp(maxColor, lerpAmt);
+            //Vector4f color = minColor.Lerp(maxColor, lerpAmt);
 
-            byte r = (byte)(color.GetX() * 255.0f + 0.5f);
-            byte g = (byte)(color.GetY() * 255.0f + 0.5f);
-            byte b = (byte)(color.GetZ() * 255.0f + 0.5f);
+            //byte r = (byte)(color.GetX() * 255.0f + 0.5f);
+            //byte g = (byte)(color.GetY() * 255.0f + 0.5f);
+            //byte b = (byte)(color.GetZ() * 255.0f + 0.5f);
 
-            DrawPixel(i, j, (byte)0xFF, b, g, r);
-            lerpAmt += lerpStep;
+            //DrawPixel(i, j, (byte)0xFF, b, g, r);
+
+            int srcX = (int)((texCoordX * (texture.GetWidth() - 1)) + 0.5f);
+            int srcY = (int)((texCoordY * (texture.GetWidth() - 1)) + 0.5f);
+            try {
+                CopyPixel(i, j, srcX, srcY, texture);
+            } catch (Exception e) {
+                int stop = 0;
+            }
+
+            texCoordX += gradients.GetTexCoordXXStep();
+            texCoordY += gradients.GetTexCoordYXStep();
+            //lerpAmt += lerpStep;
         }
     }
 

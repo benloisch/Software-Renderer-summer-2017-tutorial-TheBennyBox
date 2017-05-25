@@ -20,6 +20,8 @@ public class Bitmap {
         m_components = new byte[width * height * 4];
     }
 
+    public byte GetComponents (int index) { return m_components[index]; }
+
     public int GetWidth() {
         return m_width;
     }
@@ -38,6 +40,15 @@ public class Bitmap {
         m_components[index + 1] = b;
         m_components[index + 2] = g;
         m_components[index + 3] = r;
+    }
+
+    public void CopyPixel(int destX, int destY, int srcX, int srcY, Bitmap src) {
+        int destIndex               = (destX + (destY * m_width)) * 4;
+        int srcIndex                = (srcX + (srcY * src.GetWidth())) * 4;
+        m_components[destIndex    ] = src.GetComponents(srcIndex);
+        m_components[destIndex + 1] = src.GetComponents(srcIndex + 1);
+        m_components[destIndex + 2] = src.GetComponents(srcIndex + 2);
+        m_components[destIndex + 3] = src.GetComponents(srcIndex + 3);
     }
 
     public void CopyToByteArray(byte[] dest) {

@@ -9,10 +9,16 @@ public class Edge {
     private int m_yStart;
     private int m_yEnd;
 
-    private Vector4f m_color;
-    private Vector4f m_colorStep;
+    //private Vector4f m_color;
+    //private Vector4f m_colorStep;
 
-    public Vector4f GetColor() { return m_color; }
+    private float m_texCoordX;
+    private float m_texCoordXStep;
+    private float m_texCoordY;
+    private float m_texCoordYStep;
+
+    public float GetTexCoordX() { return m_texCoordX; }
+    public float GetTexCoordY() { return m_texCoordY; }
     public float GetX() { return m_x; }
     public int GetYStart() { return m_yStart; }
     public int GetYEnd() { return m_yEnd; }
@@ -31,13 +37,29 @@ public class Edge {
         m_x = minYVert.GetX() + yPreStep * m_xStep;
         float xPreStep = m_x - minYVert.GetX();
 
-        m_color = gradients.GetColor(minYVertIndex).Add(gradients.GetColorYStep().Mul(yPreStep)).Add(gradients.GetColorXStep().Mul(xPreStep));
-        m_colorStep  = gradients.GetColorYStep().Add(gradients.GetColorXStep().Mul(m_xStep));
+        //apply prestep of x and y to pinpoint start of gradient on the exact pixel center of nearest scanline
+        //m_color = gradients.GetColor(minYVertIndex).Add(gradients.GetColorYStep().Mul(yPreStep)).Add(gradients.GetColorXStep().Mul(xPreStep));
+
+        //add (full ColorYStep and m_xStep * ColorXStep) for every step along the edge
+        //m_colorStep  = gradients.GetColorYStep().Add(gradients.GetColorXStep().Mul(m_xStep));
+
+        m_texCoordX = gradients.GetTexCoordX(minYVertIndex) +
+                gradients.GetTexCoordXXStep() * xPreStep +
+                gradients.GetTexCoordXYStep() * yPreStep;
+
+        m_texCoordXStep = gradients.GetTexCoordXYStep() + gradients.GetTexCoordXXStep() * m_xStep;
+
+        m_texCoordY = gradients.GetTexCoordY(minYVertIndex) +
+                gradients.GetTexCoordYXStep() * xPreStep +
+                gradients.GetTexCoordYYStep() * yPreStep;
+
+        m_texCoordYStep = gradients.GetTexCoordYYStep() + gradients.GetTexCoordYXStep() * m_xStep;
 
     }
 
     public void Step() {
         m_x += m_xStep;
-        m_color = m_color.Add(m_colorStep);
+        m_texCoordX += m_texCoordXStep;
+        m_texCoordY += m_texCoordYStep;
     }
 }
