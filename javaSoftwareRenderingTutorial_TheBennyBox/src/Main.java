@@ -11,10 +11,10 @@ public class Main {
         for (int j = 0; j < texture.GetHeight(); j++) {
             for (int i = 0; i < texture.GetWidth(); i++) {
                 texture.DrawPixel(i, j,
-                        (byte)(Math.random() * 255.0 + 0.5),
-                        (byte)(Math.random() * 255.0 + 0.5),
-                        (byte)(Math.random() * 255.0 + 0.5),
-                        (byte)(Math.random() * 255.0 + 0.5));
+                        (byte)(i * 255.0 + 0.5),
+                        (byte)(i * 255.0 + 0.5),
+                        (byte)(i * 255.0 + 0.5),
+                        (byte)(i * 255.0 + 0.5));
             }
         }
 
