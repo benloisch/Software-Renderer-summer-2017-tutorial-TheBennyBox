@@ -118,6 +118,7 @@ public class RenderContext extends Bitmap{
         //Vector4f minColor = left.GetColor();
         //Vector4f maxColor = right.GetColor();
 
+        //at this y-scanline, getTexCoord + amount offset by pixel center
         float texCoordX = left.GetTexCoordX() + gradients.GetTexCoordXXStep() * xPrestep;
         float texCoordY = left.GetTexCoordY() + gradients.GetTexCoordYXStep() * xPrestep;
 

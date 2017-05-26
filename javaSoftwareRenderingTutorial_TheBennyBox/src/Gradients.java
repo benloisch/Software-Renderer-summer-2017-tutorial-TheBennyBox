@@ -15,7 +15,7 @@ public class Gradients {
     public float GetTexCoordY(int loc) { return m_texCoordY[loc]; }
 
     public float GetTexCoordXXStep() { return m_texCoordXXStep; }
-    public float GetTexCoordXYStep() { return m_texCoordYYStep; }
+    public float GetTexCoordXYStep() { return m_texCoordXYStep; }
     public float GetTexCoordYXStep() { return m_texCoordYXStep; }
     public float GetTexCoordYYStep() { return m_texCoordYYStep; }
 

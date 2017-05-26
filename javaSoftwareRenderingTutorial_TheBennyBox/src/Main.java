@@ -11,16 +11,19 @@ public class Main {
         for (int j = 0; j < texture.GetHeight(); j++) {
             for (int i = 0; i < texture.GetWidth(); i++) {
                 texture.DrawPixel(i, j,
-                        (byte)(i * 255.0 + 0.5),
-                        (byte)(i * 255.0 + 0.5),
-                        (byte)(i * 255.0 + 0.5),
-                        (byte)(i * 255.0 + 0.5));
+                        (byte)(Math.random() * 255.0 + 0.5),
+                        (byte)(Math.random() * 255.0 + 0.5),
+                        (byte)(Math.random() * 255.0 + 0.5),
+                        (byte)(Math.random() * 255.0 + 0.5));
             }
         }
 
-        Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
-        Vertex midYVert = new Vertex(new Vector4f(0, 1, 0), new Vector4f(0.5f, 1.0f, 0.0f, 0.0f));
-        Vertex maxYVert = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 0.0f, 0.0f, 0.0f));
+        Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 1.0f, 0.0f, 0.0f)); //bottom left
+        Vertex midYVert = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
+        Vertex maxYVert = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
+        Vertex minYVert2 = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
+        Vertex midYVert2 = new Vertex(new Vector4f(1, 1, 0), new Vector4f(1.0f, 0.0f, 0.0f, 0.0f)); //top right
+        Vertex maxYVert2 = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
 
         Matrix4f projection = new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
                 (float)target.GetWidth()/(float) target.GetHeight(), 0.1f, 1000.0f);
@@ -40,6 +43,7 @@ public class Main {
 
             target.Clear((byte)0x00);
             target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
+            target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
 
             display.SwapBuffers();
         }

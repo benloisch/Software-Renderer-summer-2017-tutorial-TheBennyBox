@@ -31,6 +31,7 @@ public class Edge {
         float yDist = maxYVert.GetY() - minYVert.GetY();
         float xDist = maxYVert.GetX() - minYVert.GetX();
 
+        //yPreStep = nearest Scanline - actual y position of vertex
         float yPreStep = m_yStart - minYVert.GetY();
 
         m_xStep = (float)xDist / (float)yDist;
@@ -47,12 +48,14 @@ public class Edge {
                 gradients.GetTexCoordXXStep() * xPreStep +
                 gradients.GetTexCoordXYStep() * yPreStep;
 
+        //stepping down y axis by 1, and x axis by XXStep * slope of line
         m_texCoordXStep = gradients.GetTexCoordXYStep() + gradients.GetTexCoordXXStep() * m_xStep;
 
         m_texCoordY = gradients.GetTexCoordY(minYVertIndex) +
                 gradients.GetTexCoordYXStep() * xPreStep +
                 gradients.GetTexCoordYYStep() * yPreStep;
 
+        //stepping down y axis by 1, and x axis by YXStep * slope of line
         m_texCoordYStep = gradients.GetTexCoordYYStep() + gradients.GetTexCoordYXStep() * m_xStep;
 
     }
