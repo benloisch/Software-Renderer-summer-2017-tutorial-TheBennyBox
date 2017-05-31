@@ -119,8 +119,12 @@ public class RenderContext extends Bitmap{
         //Vector4f maxColor = right.GetColor();
 
         //at this y-scanline, getTexCoord + amount offset by pixel center
-        float texCoordX = left.GetTexCoordX() + gradients.GetTexCoordXXStep() * xPrestep;
-        float texCoordY = left.GetTexCoordY() + gradients.GetTexCoordYXStep() * xPrestep;
+        float xDist = right.GetX() - left.GetX();
+        float texCoordXXStep = (right.GetTexCoordX() - left.GetTexCoordX())/xDist;
+        float texCoordYXStep = (right.GetTexCoordY() - left.GetTexCoordY())/xDist;
+
+        float texCoordX = left.GetTexCoordX() + texCoordXXStep * xPrestep;
+        float texCoordY = left.GetTexCoordY() + texCoordYXStep * xPrestep;
 
 
 
@@ -137,7 +141,7 @@ public class RenderContext extends Bitmap{
             //DrawPixel(i, j, (byte)0xFF, b, g, r);
 
             int srcX = (int)((texCoordX * (texture.GetWidth() - 1)) + 0.5f);
-            int srcY = (int)((texCoordY * (texture.GetWidth() - 1)) + 0.5f);
+            int srcY = (int)((texCoordY * (texture.GetHeight() - 1)) + 0.5f);
             try {
                 CopyPixel(i, j, srcX, srcY, texture);
             } catch (Exception e) {
