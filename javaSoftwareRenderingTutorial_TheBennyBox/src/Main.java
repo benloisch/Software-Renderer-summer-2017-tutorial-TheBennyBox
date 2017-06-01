@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /**
  * Created by Ben Loisch on 5/16/2017.
  */
@@ -17,6 +19,15 @@ public class Main {
                         (byte)(Math.random() * 255.0 + 0.5));
             }
         }
+
+        try {
+            texture = new Bitmap("cool-wallpaper-1.jpg");
+        } catch (IOException e) {}
+
+        Mesh mesh = null;
+        try {
+            mesh = new Mesh("icosphere.obj");
+        } catch (IOException e) {};
 
         Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 1.0f, 0.0f, 0.0f)); //bottom left
         Vertex midYVert = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
@@ -42,8 +53,10 @@ public class Main {
             Matrix4f transform = projection.Mul(translation.Mul(rotation));
 
             target.Clear((byte)0x00);
-            target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
-            target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
+            //target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
+            //target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
+
+            target.DrawMesh(mesh, transform, texture);
 
             display.SwapBuffers();
         }

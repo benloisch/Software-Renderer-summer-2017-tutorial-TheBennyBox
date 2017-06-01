@@ -1,6 +1,9 @@
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -18,6 +21,36 @@ public class Bitmap {
         m_width      = width;
         m_height     = height;
         m_components = new byte[width * height * 4];
+    }
+
+    public Bitmap(String fileName) throws IOException
+    {
+        int width = 0;
+        int height = 0;
+        byte[] components = null;
+
+        BufferedImage image = ImageIO.read(new File(fileName));
+
+        width = image.getWidth();
+        height = image.getHeight();
+
+        int imgPixels[] = new int[width * height];
+        image.getRGB(0, 0, width, height, imgPixels, 0, width);
+        components = new byte[width * height * 4];
+
+        for(int i = 0; i < width * height; i++)
+        {
+            int pixel = imgPixels[i];
+
+            components[i * 4]     = (byte)((pixel >> 24) & 0xFF); // A
+            components[i * 4 + 1] = (byte)((pixel      ) & 0xFF); // B
+            components[i * 4 + 2] = (byte)((pixel >> 8 ) & 0xFF); // G
+            components[i * 4 + 3] = (byte)((pixel >> 16) & 0xFF); // R
+        }
+
+        m_width = width;
+        m_height = height;
+        m_components = components;
     }
 
     public byte GetComponents (int index) { return m_components[index]; }
