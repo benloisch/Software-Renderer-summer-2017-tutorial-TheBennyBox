@@ -50,6 +50,13 @@ public class Vertex {
                 m_texCoords.Lerp(other.GetTexCoords(), lerpAmt));
     }
 
+    public boolean IsInsideViewFrustum() {
+        return
+                Math.abs(m_pos.GetX()) <= Math.abs(m_pos.GetW()) &&
+                Math.abs(m_pos.GetY()) <= Math.abs(m_pos.GetW()) &&
+                Math.abs(m_pos.GetZ()) <= Math.abs(m_pos.GetW());
+    }
+
     public float Get(int index) {
         switch (index) {
             case 0:

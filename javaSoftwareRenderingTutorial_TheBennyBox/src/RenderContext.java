@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,10 +17,48 @@ public class RenderContext extends Bitmap{
         m_zBuffer = new float[width * height];
     }
 
+    public void DrawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+        if (v1.IsInsideViewFrustum() && v2.IsInsideViewFrustum() && v3.IsInsideViewFrustum()) {
+            FillTriangle(v1, v2, v3, texture);
+            return;
+        }
+
+        List<Vertex> vertices = new ArrayList<>();
+        List<Vertex> auxillaryList = new ArrayList<>();
+
+        vertices.add(v1);
+        vertices.add(v2);
+        vertices.add(v3);
+
+        if (ClipPolygonAxis(vertices, auxillaryList, 0) &&
+                ClipPolygonAxis(vertices, auxillaryList, 1) &&
+                ClipPolygonAxis(vertices, auxillaryList, 2)) {
+
+            Vertex initialVertex = vertices.get(0);
+            for (int i = 1; i < vertices.size() - 1; i++) {
+                FillTriangle(initialVertex, vertices.get(i), vertices.get(i+1), texture);
+            }
+        }
+    }
+
     public void ClearDepthBuffer() {
         for (int i = 0; i < m_zBuffer.length; i++) {
             m_zBuffer[i] = Float.MAX_VALUE;
         }
+    }
+
+    private boolean ClipPolygonAxis(List<Vertex> vertices, List<Vertex> auxillaryList, int componentIndex) {
+        ClipPolygonComponent(vertices, componentIndex, 1.0f, auxillaryList);
+        vertices.clear();
+
+        if (auxillaryList.isEmpty()) {
+            return false;
+        }
+
+        ClipPolygonComponent(auxillaryList, componentIndex, -1.0f, vertices);
+        auxillaryList.clear();
+
+        return !vertices.isEmpty();
     }
 
     private void ClipPolygonComponent(List<Vertex> vertices, int componentIndex, float componentFactor, List<Vertex> result) {
@@ -78,7 +117,7 @@ public class RenderContext extends Bitmap{
         }
     }
 
-    public void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
+    private void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
         Matrix4f screenSpaceTransform = new Matrix4f().InitScreenSpaceTransform(GetWidth()/2.0f, GetHeight()/2.0f);
 
         //v1,v2, and v3 are in NDC space

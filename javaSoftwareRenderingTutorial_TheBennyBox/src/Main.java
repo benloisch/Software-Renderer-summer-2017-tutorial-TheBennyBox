@@ -48,7 +48,7 @@ public class Main {
 
             rotCounter += delta;
             //Matrix4f transform = World(trans, rot, scale) * View(no cam right now) * Projection
-            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f + (5.0f * (float)Math.sin(rotCounter)));
+            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f + (2.0f * (float)Math.sin(rotCounter)));
             Matrix4f rotation = new Matrix4f().InitRotation(0.0f, rotCounter, 0.0f);
             Matrix4f scale = new Matrix4f().InitScale(0.001f, 0.001f, 0.001f);
             Matrix4f transform = projection.Mul(translation.Mul(rotation));
@@ -58,8 +58,8 @@ public class Main {
             //target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
             //target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
 
-            target.DrawMesh(mesh, transform, texture);
-
+            //target.DrawMesh(mesh, transform, texture);
+            mesh.DrawMesh(target, mesh, transform, texture);
             display.SwapBuffers();
 
         }
