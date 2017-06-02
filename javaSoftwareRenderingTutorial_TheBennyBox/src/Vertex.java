@@ -43,4 +43,25 @@ public class Vertex {
 
         return ((x1 * y2) - (x2 * y1));
     }
+
+    public Vertex Lerp(Vertex other, float lerpAmt) {
+        return new Vertex(
+                m_pos.Lerp(other.GetPosition(), lerpAmt),
+                m_texCoords.Lerp(other.GetTexCoords(), lerpAmt));
+    }
+
+    public float Get(int index) {
+        switch (index) {
+            case 0:
+                return m_pos.GetX();
+            case 1:
+                return m_pos.GetY();
+            case 2:
+                return m_pos.GetZ();
+            case 3:
+                return m_pos.GetW();
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
 }

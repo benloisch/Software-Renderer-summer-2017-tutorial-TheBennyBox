@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Created by Ben Loisch on 5/17/2017.
  */
@@ -16,6 +19,35 @@ public class RenderContext extends Bitmap{
     public void ClearDepthBuffer() {
         for (int i = 0; i < m_zBuffer.length; i++) {
             m_zBuffer[i] = Float.MAX_VALUE;
+        }
+    }
+
+    private void ClipPolygonComponent(List<Vertex> vertices, int componentIndex, float componentFactor, List<Vertex> result) {
+        Vertex previousVertex = vertices.get(vertices.size() - 1);
+        float previousComponent = previousVertex.Get(componentIndex) * componentFactor;
+        boolean previousInside = previousComponent <= previousVertex.GetPosition().GetW();
+
+        Iterator<Vertex> it = vertices.iterator();
+        while (it.hasNext()) {
+            Vertex currentVertex = it.next();
+            float currentComponent = currentVertex.Get(componentIndex) * componentFactor;
+            boolean currentInside = currentComponent <= currentVertex.GetPosition().GetW();
+
+            if (currentInside ^ previousInside) {
+                float lerpAmt = (previousVertex.GetPosition().GetW() - previousComponent) /
+                        ((previousVertex.GetPosition().GetW() - previousComponent) -
+                        (currentVertex.GetPosition().GetW() - currentComponent));
+
+                result.add(previousVertex.Lerp(currentVertex, lerpAmt));
+            }
+
+            if (currentInside) {
+                result.add(currentVertex);
+            }
+
+            previousVertex = currentVertex;
+            previousComponent = currentComponent;
+            previousInside = currentInside;
         }
     }
 

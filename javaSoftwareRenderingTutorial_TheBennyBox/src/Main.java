@@ -48,7 +48,7 @@ public class Main {
 
             rotCounter += delta;
             //Matrix4f transform = World(trans, rot, scale) * View(no cam right now) * Projection
-            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f);
+            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f + (5.0f * (float)Math.sin(rotCounter)));
             Matrix4f rotation = new Matrix4f().InitRotation(0.0f, rotCounter, 0.0f);
             Matrix4f scale = new Matrix4f().InitScale(0.001f, 0.001f, 0.001f);
             Matrix4f transform = projection.Mul(translation.Mul(rotation));
