@@ -4,28 +4,36 @@
 public class RenderContext extends Bitmap{
 
     //y-length buffer that holds xMin and xMax
-    private final int m_scanBuffer[];
+    //private final int m_scanBuffer[];
+    private float[] m_zBuffer;
 
     public RenderContext(int width, int height) {
         super(width, height);
-        m_scanBuffer = new int[height * 2];
+        //m_scanBuffer = new int[height * 2];
+        m_zBuffer = new float[width * height];
+    }
+
+    public void ClearDepthBuffer() {
+        for (int i = 0; i < m_zBuffer.length; i++) {
+            m_zBuffer[i] = Float.MAX_VALUE;
+        }
     }
 
     //at y, xMin < drawPixels < xMax
     public void DrawScanBuffer(int yCoord, int xMin, int xMax) {
-        m_scanBuffer[yCoord * 2] = xMin;
-        m_scanBuffer[yCoord * 2 + 1] = xMax;
+        //m_scanBuffer[yCoord * 2] = xMin;
+        //m_scanBuffer[yCoord * 2 + 1] = xMax;
     }
 
     //yMin < DrawScanBuffer (draw horizontal line) < yMax
     public void FillShape(int yMin, int yMax) {
         for (int j = yMin; j < yMax; j++) {
-            int xMin = m_scanBuffer[j * 2];
-            int xMax = m_scanBuffer[j * 2 + 1];
+            //int xMin = m_scanBuffer[j * 2];
+            //int xMax = m_scanBuffer[j * 2 + 1];
 
-            for (int i = xMin; i < xMax; i++) {
-                DrawPixel(i, j, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF);
-            }
+            //for (int i = xMin; i < xMax; i++) {
+            //    DrawPixel(i, j, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF);
+            //}
         }
     }
 
@@ -136,6 +144,7 @@ public class RenderContext extends Bitmap{
         float texCoordXXStep = (right.GetTexCoordX() - left.GetTexCoordX())/xDist;
         float texCoordYXStep = (right.GetTexCoordY() - left.GetTexCoordY())/xDist;
         float oneOverZXStep = (right.GetOneOverZ() - left.GetOneOverZ())/xDist;
+        float depthXStep = (right.GetDepth() - left.GetDepth())/xDist;
 
         //float texCoordX = left.GetTexCoordX() + gradients.GetTexCoordXXStep() * xPrestep;
         //float texCoordY = left.GetTexCoordY() + gradients.GetTexCoordYXStep() * xPrestep;
@@ -143,7 +152,7 @@ public class RenderContext extends Bitmap{
         float texCoordX = left.GetTexCoordX() + texCoordXXStep * xPrestep;
         float texCoordY = left.GetTexCoordY() + texCoordYXStep * xPrestep;
         float oneOverZ = left.GetOneOverZ() + oneOverZXStep * xPrestep;
-
+        float depth = left.GetDepth() + depthXStep * xPrestep;
 
         //float lerpAmt = 0.0f;
         //float lerpStep = 1.0f / (float)(xMax - xMin);
@@ -155,19 +164,24 @@ public class RenderContext extends Bitmap{
             //byte g = (byte)(color.GetY() * 255.0f + 0.5f);
             //byte b = (byte)(color.GetZ() * 255.0f + 0.5f);
 
-            //DrawPixel(i, j, (byte)0xFF, b, g, r);
-            float z = 1.0f/oneOverZ;
-            int srcX = (int)((texCoordX * z) * (texture.GetWidth() - 1) + 0.5f);
-            int srcY = (int)((texCoordY * z) * (texture.GetHeight() - 1) + 0.5f);
-            try {
-                CopyPixel(i, j, srcX, srcY, texture);
-            } catch (Exception e) {
-                int stop = 0;
+            int index = i + j * GetWidth();
+            if(depth < m_zBuffer[index]) {
+                //DrawPixel(i, j, (byte)0xFF, b, g, r);
+                m_zBuffer[index] = depth;
+                float z = 1.0f / oneOverZ;
+                int srcX = (int) ((texCoordX * z) * (texture.GetWidth() - 1) + 0.5f);
+                int srcY = (int) ((texCoordY * z) * (texture.GetHeight() - 1) + 0.5f);
+                try {
+                    CopyPixel(i, j, srcX, srcY, texture);
+                } catch (Exception e) {
+                    int stop = 0;
+                }
             }
 
             oneOverZ += gradients.GetOneOverZXStep();
             texCoordX += gradients.GetTexCoordXXStep();
             texCoordY += gradients.GetTexCoordYXStep();
+            depth += depthXStep;
             //lerpAmt += lerpStep;
         }
     }
@@ -201,7 +215,7 @@ public class RenderContext extends Bitmap{
         for (int j = yStart; j < yEnd; j++) {
             //if whichSide = 0, write to min part of scan buffer
             //if whichSide = 1, write to max part of scan buffer
-            m_scanBuffer[j * 2 + whichSide] = (int)Math.ceil(curX);
+            //m_scanBuffer[j * 2 + whichSide] = (int)Math.ceil(curX);
             curX += xStep;
         }
     }

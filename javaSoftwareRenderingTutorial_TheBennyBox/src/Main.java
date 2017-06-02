@@ -21,12 +21,12 @@ public class Main {
         }
 
         try {
-            texture = new Bitmap("cool-wallpaper-1.jpg");
+            texture = new Bitmap("bricks.jpg");
         } catch (IOException e) {}
 
         Mesh mesh = null;
         try {
-            mesh = new Mesh("icosphere.obj");
+            mesh = new Mesh("monkey2.obj");
         } catch (IOException e) {};
 
         Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 1.0f, 0.0f, 0.0f)); //bottom left
@@ -50,15 +50,18 @@ public class Main {
             //Matrix4f transform = World(trans, rot, scale) * View(no cam right now) * Projection
             Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f);
             Matrix4f rotation = new Matrix4f().InitRotation(0.0f, rotCounter, 0.0f);
+            Matrix4f scale = new Matrix4f().InitScale(0.001f, 0.001f, 0.001f);
             Matrix4f transform = projection.Mul(translation.Mul(rotation));
 
             target.Clear((byte)0x00);
+            target.ClearDepthBuffer();
             //target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
             //target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
 
             target.DrawMesh(mesh, transform, texture);
 
             display.SwapBuffers();
+
         }
     }
 }

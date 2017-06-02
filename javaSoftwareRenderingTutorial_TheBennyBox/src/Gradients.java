@@ -6,6 +6,7 @@ public class Gradients {
     private float[] m_texCoordX;
     private float[] m_texCoordY;
     private float[] m_oneOverZ;
+    private float[] m_depth;
 
     private float m_texCoordXXStep;
     private float m_texCoordXYStep;
@@ -13,10 +14,13 @@ public class Gradients {
     private float m_texCoordYYStep;
     private float m_oneOverZXStep;
     private float m_oneOverZYStep;
+    private float m_depthXStep;
+    private float m_depthYStep;
 
     public float GetTexCoordX(int loc) { return m_texCoordX[loc]; }
     public float GetTexCoordY(int loc) { return m_texCoordY[loc]; }
     public float GetOneOverZ(int loc) { return m_oneOverZ[loc]; }
+    public float GetDepth(int loc) { return m_depth[loc]; }
 
     public float GetTexCoordXXStep() { return m_texCoordXXStep; }
     public float GetTexCoordXYStep() { return m_texCoordXYStep; }
@@ -25,6 +29,9 @@ public class Gradients {
 
     public float GetOneOverZXStep() { return m_oneOverZXStep; }
     public float GetOneOverZYStep() { return m_oneOverZYStep; }
+
+    public float GetDepthXStep() { return m_depthXStep; }
+    public float GetDepthYStep() { return m_depthYStep; }
 
     //public Vector4f GetColor(int loc) { return m_color[loc]; }
     //public Vector4f GetColorXStep() { return m_colorXStep; }
@@ -60,10 +67,15 @@ public class Gradients {
         m_texCoordX = new float[3];
         m_texCoordY = new float[3];
         m_oneOverZ = new float[3];
+        m_depth = new float[3];
 
         m_oneOverZ[0] = 1.0f/minYVert.GetPosition().GetW();
         m_oneOverZ[1] = 1.0f/midYVert.GetPosition().GetW();
         m_oneOverZ[2] = 1.0f/maxYVert.GetPosition().GetW();
+
+        m_depth[0] = minYVert.GetPosition().GetZ();
+        m_depth[1] = midYVert.GetPosition().GetZ();
+        m_depth[2] = maxYVert.GetPosition().GetZ();
 
         m_texCoordX[0] = minYVert.GetTexCoords().GetX() * m_oneOverZ[0];
         m_texCoordX[1] = midYVert.GetTexCoords().GetX() * m_oneOverZ[1];
@@ -80,6 +92,9 @@ public class Gradients {
 
         m_oneOverZXStep = CalcXStep(m_oneOverZ, minYVert, midYVert, maxYVert, oneOverdx);
         m_oneOverZYStep = CalcYStep(m_oneOverZ, minYVert, midYVert, maxYVert, oneOverdy);
+
+        m_depthXStep = CalcXStep(m_depth, minYVert, midYVert, maxYVert, oneOverdx);
+        m_depthYStep = CalcYStep(m_depth, minYVert, midYVert, maxYVert, oneOverdy);
 
         /*
         m_texCoordXXStep =
