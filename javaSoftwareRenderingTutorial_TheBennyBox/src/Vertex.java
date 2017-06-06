@@ -4,11 +4,13 @@
 public class Vertex {
     private Vector4f m_pos;
     private Vector4f m_texCoords;
+    private Vector4f m_normal;
 
     public float GetX() { return m_pos.GetX(); }
     public float GetY() { return m_pos.GetY(); }
     public Vector4f GetPosition() { return m_pos; }
     public Vector4f GetTexCoords() { return m_texCoords; }
+    public Vector4f GetNormal() { return m_normal; }
 
     Vertex(float x, float y, float z, float w) {
         m_pos = new Vector4f(x, y, z, w);
@@ -18,20 +20,21 @@ public class Vertex {
         m_pos = new Vector4f(x, y, z, 1);
     }
 
-    Vertex(Vector4f pos, Vector4f texCoords) {
+    Vertex(Vector4f pos, Vector4f texCoords, Vector4f normal) {
         m_pos = pos;
         m_texCoords = texCoords;
+        m_normal = normal;
     }
 
-    public Vertex Transform(Matrix4f transform) {
-        return new Vertex(transform.Transform(m_pos),  m_texCoords);
+    public Vertex Transform(Matrix4f transform, Matrix4f normalTransform) {
+        return new Vertex(transform.Transform(m_pos),  m_texCoords, normalTransform.Transform(m_normal));
     }
 
     public Vertex PersepctiveDivide() {
         return new Vertex(new Vector4f(m_pos.GetX()/m_pos.GetW(),
                 m_pos.GetY()/m_pos.GetW(),
                 m_pos.GetZ()/m_pos.GetW(),
-                m_pos.GetW()), m_texCoords);
+                m_pos.GetW()), m_texCoords, m_normal);
     }
 
     public float TriangleArea(Vertex b, Vertex c) {
@@ -47,7 +50,8 @@ public class Vertex {
     public Vertex Lerp(Vertex other, float lerpAmt) {
         return new Vertex(
                 m_pos.Lerp(other.GetPosition(), lerpAmt),
-                m_texCoords.Lerp(other.GetTexCoords(), lerpAmt));
+                m_texCoords.Lerp(other.GetTexCoords(), lerpAmt),
+                m_normal.Lerp(other.GetNormal(), lerpAmt));
     }
 
     public boolean IsInsideViewFrustum() {

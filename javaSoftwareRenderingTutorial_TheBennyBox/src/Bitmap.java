@@ -75,13 +75,14 @@ public class Bitmap {
         m_components[index + 3] = r;
     }
 
-    public void CopyPixel(int destX, int destY, int srcX, int srcY, Bitmap src) {
+    public void CopyPixel(int destX, int destY, int srcX, int srcY, Bitmap src, float lightAmt) {
         int destIndex               = (destX + (destY * m_width)) * 4;
         int srcIndex                = (srcX + (srcY * src.GetWidth())) * 4;
-        m_components[destIndex    ] = src.GetComponents(srcIndex);
-        m_components[destIndex + 1] = src.GetComponents(srcIndex + 1);
-        m_components[destIndex + 2] = src.GetComponents(srcIndex + 2);
-        m_components[destIndex + 3] = src.GetComponents(srcIndex + 3);
+
+        m_components[destIndex    ] = (byte)((src.GetComponents(srcIndex) & 0xFF) * lightAmt);
+        m_components[destIndex + 1] = (byte)((src.GetComponents(srcIndex + 1) & 0xFF) * lightAmt);
+        m_components[destIndex + 2] = (byte)((src.GetComponents(srcIndex + 2) & 0xFF) * lightAmt);
+        m_components[destIndex + 3] = (byte)((src.GetComponents(srcIndex + 3) & 0xFF) * lightAmt);
     }
 
     public void CopyToByteArray(byte[] dest) {

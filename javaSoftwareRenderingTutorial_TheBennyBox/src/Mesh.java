@@ -22,17 +22,20 @@ public class Mesh {
         m_vertices = new ArrayList<Vertex>();
         for (int i = 0; i < model.GetPositions().size(); i++) {
             m_vertices.add(new Vertex(model.GetPositions().get(i),
-                                    model.GetTexCoords().get(i)));
+                                    model.GetTexCoords().get(i),
+                                    model.GetNormals().get(i)));
         }
 
         m_indices = model.GetIndices();
     }
 
-    public void DrawMesh(RenderContext context, Mesh mesh, Matrix4f transform, Bitmap texture) {
+    public void DrawMesh(RenderContext context, Matrix4f viewProjection, Mesh mesh, Matrix4f transform, Bitmap texture) {
+        Matrix4f mvp = viewProjection.Mul(transform);
+
         for (int i = 0; i < mesh.GetNumIndices(); i += 3) {
-            context.DrawTriangle(mesh.GetVertex(mesh.GetIndex(i)).Transform(transform),
-                    mesh.GetVertex(mesh.GetIndex(i+1)).Transform(transform),
-                    mesh.GetVertex(mesh.GetIndex(i+2)).Transform(transform),
+            context.DrawTriangle(mesh.GetVertex(mesh.GetIndex(i)).Transform(mvp, transform),
+                    mesh.GetVertex(mesh.GetIndex(i+1)).Transform(mvp, transform),
+                    mesh.GetVertex(mesh.GetIndex(i+2)).Transform(mvp, transform),
                     texture);
         }
     }

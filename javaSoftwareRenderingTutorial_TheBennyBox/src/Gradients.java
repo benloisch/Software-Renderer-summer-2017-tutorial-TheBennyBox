@@ -7,6 +7,7 @@ public class Gradients {
     private float[] m_texCoordY;
     private float[] m_oneOverZ;
     private float[] m_depth;
+    private float[] m_lightAmt;
 
     private float m_texCoordXXStep;
     private float m_texCoordXYStep;
@@ -16,11 +17,14 @@ public class Gradients {
     private float m_oneOverZYStep;
     private float m_depthXStep;
     private float m_depthYStep;
+    private float m_lightAmtXStep;
+    private float m_lightAmtYStep;
 
     public float GetTexCoordX(int loc) { return m_texCoordX[loc]; }
     public float GetTexCoordY(int loc) { return m_texCoordY[loc]; }
     public float GetOneOverZ(int loc) { return m_oneOverZ[loc]; }
     public float GetDepth(int loc) { return m_depth[loc]; }
+    public float GetLightAmt(int loc) { return m_lightAmt[loc]; }
 
     public float GetTexCoordXXStep() { return m_texCoordXXStep; }
     public float GetTexCoordXYStep() { return m_texCoordXYStep; }
@@ -32,6 +36,9 @@ public class Gradients {
 
     public float GetDepthXStep() { return m_depthXStep; }
     public float GetDepthYStep() { return m_depthYStep; }
+
+    public float GetLightAmtXStep() { return m_lightAmtXStep; }
+    public float GetLightAmtYStep() { return m_lightAmtYStep; }
 
     //public Vector4f GetColor(int loc) { return m_color[loc]; }
     //public Vector4f GetColorXStep() { return m_colorXStep; }
@@ -53,6 +60,17 @@ public class Gradients {
                 (midYVert.GetX() - maxYVert.GetX()))) * oneOverdy;
     }
 
+    private float Saturate(float val) {
+        if (val < 0.0f) {
+            return 0.0f;
+        }
+        if (val > 1.0f) {
+            return 1.0f;
+        }
+
+        return val;
+    }
+
     public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert) {
         //m_color = new Vector4f[3];
 
@@ -68,6 +86,7 @@ public class Gradients {
         m_texCoordY = new float[3];
         m_oneOverZ = new float[3];
         m_depth = new float[3];
+        m_lightAmt = new float[3];
 
         m_oneOverZ[0] = 1.0f/minYVert.GetPosition().GetW();
         m_oneOverZ[1] = 1.0f/midYVert.GetPosition().GetW();
@@ -85,6 +104,11 @@ public class Gradients {
         m_texCoordY[1] = midYVert.GetTexCoords().GetY() * m_oneOverZ[1];
         m_texCoordY[2] = maxYVert.GetTexCoords().GetY() * m_oneOverZ[2];
 
+        Vector4f lightDir = new Vector4f(1, 0, -1);
+        m_lightAmt[0] = (Saturate(minYVert.GetNormal().Dot(lightDir)) * 0.9f) + 0.1f;
+        m_lightAmt[1] = (Saturate(midYVert.GetNormal().Dot(lightDir)) * 0.9f) + 0.1f;
+        m_lightAmt[2] = (Saturate(maxYVert.GetNormal().Dot(lightDir)) * 0.9f) + 0.1f;
+
         m_texCoordXXStep = CalcXStep(m_texCoordX, minYVert, midYVert, maxYVert, oneOverdx);
         m_texCoordXYStep = CalcYStep(m_texCoordX, minYVert, midYVert, maxYVert, oneOverdy);
         m_texCoordYXStep = CalcXStep(m_texCoordY, minYVert, midYVert, maxYVert, oneOverdx);
@@ -95,6 +119,9 @@ public class Gradients {
 
         m_depthXStep = CalcXStep(m_depth, minYVert, midYVert, maxYVert, oneOverdx);
         m_depthYStep = CalcYStep(m_depth, minYVert, midYVert, maxYVert, oneOverdy);
+
+        m_lightAmtXStep = CalcXStep(m_lightAmt, minYVert, midYVert, maxYVert, oneOverdx);
+        m_lightAmtYStep = CalcYStep(m_lightAmt, minYVert, midYVert, maxYVert, oneOverdy);
 
         /*
         m_texCoordXXStep =

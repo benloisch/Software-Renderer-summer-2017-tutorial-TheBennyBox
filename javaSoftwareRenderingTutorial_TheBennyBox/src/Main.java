@@ -21,23 +21,28 @@ public class Main {
         }
 
         try {
-            texture = new Bitmap("bricks.jpg");
+            texture = new Bitmap("bricks2.jpg");
         } catch (IOException e) {}
 
         Mesh mesh = null;
         try {
-            mesh = new Mesh("monkey2.obj");
+            mesh = new Mesh("smoothMonkey0.obj");
         } catch (IOException e) {};
 
-        Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 1.0f, 0.0f, 0.0f)); //bottom left
-        Vertex midYVert = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
-        Vertex maxYVert = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
-        Vertex minYVert2 = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
-        Vertex midYVert2 = new Vertex(new Vector4f(1, 1, 0), new Vector4f(1.0f, 0.0f, 0.0f, 0.0f)); //top right
-        Vertex maxYVert2 = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
+        //Vertex minYVert = new Vertex(new Vector4f(-1, -1, 0), new Vector4f(0.0f, 1.0f, 0.0f, 0.0f)); //bottom left
+        //Vertex midYVert = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
+        //Vertex maxYVert = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
+        //Vertex minYVert2 = new Vertex(new Vector4f(-1, 1, 0), new Vector4f(0.0f, 0.0f, 0.0f, 0.0f)); //top left
+        //Vertex midYVert2 = new Vertex(new Vector4f(1, 1, 0), new Vector4f(1.0f, 0.0f, 0.0f, 0.0f)); //top right
+        //Vertex maxYVert2 = new Vertex(new Vector4f(1, -1, 0), new Vector4f(1.0f, 1.0f, 0.0f, 0.0f)); //bottom right
 
         Matrix4f projection = new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
                 (float)target.GetWidth()/(float) target.GetHeight(), 0.1f, 1000.0f);
+
+        Camera camera = new Camera(new Matrix4f().InitPerspective((float)Math.toRadians(70.0f),
+                (float)target.GetWidth()/(float)target.GetHeight(), 0.1f, 1000.0f));
+
+        Transform monkeyTransform  = new Transform(new Vector4f(0.0f, 0.0f, 3.0f));
 
         float rotCounter = 0.0f;
         long previousTime = System.nanoTime();
@@ -48,7 +53,7 @@ public class Main {
 
             rotCounter += delta;
             //Matrix4f transform = World(trans, rot, scale) * View(no cam right now) * Projection
-            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 3.0f + (2.0f * (float)Math.sin(rotCounter)));
+            Matrix4f translation = new Matrix4f().InitTranslation(0.0f, 0.0f, 6.0f);// + (2.0f * (float)Math.sin(rotCounter)));
             Matrix4f rotation = new Matrix4f().InitRotation(0.0f, rotCounter, 0.0f);
             Matrix4f scale = new Matrix4f().InitScale(0.001f, 0.001f, 0.001f);
             Matrix4f transform = projection.Mul(translation.Mul(rotation));
@@ -58,8 +63,11 @@ public class Main {
             //target.FillTriangle(maxYVert.Transform(transform), midYVert.Transform(transform), minYVert.Transform(transform), texture);
             //target.FillTriangle(maxYVert2.Transform(transform), midYVert2.Transform(transform), minYVert2.Transform(transform), texture);
 
+            Matrix4f vp = camera.GetViewProjection();
+            monkeyTransform = monkeyTransform.Rotate(new Quaternion(new Vector4f(0.0f, 1.0f, 0.0f), delta));
+
             //target.DrawMesh(mesh, transform, texture);
-            mesh.DrawMesh(target, mesh, transform, texture);
+            mesh.DrawMesh(target, vp, mesh, transform, texture);
             display.SwapBuffers();
 
         }

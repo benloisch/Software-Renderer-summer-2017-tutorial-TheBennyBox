@@ -110,9 +110,10 @@ public class RenderContext extends Bitmap{
 
     public void DrawMesh(Mesh mesh, Matrix4f transform, Bitmap texture) {
         for (int i = 0; i < mesh.GetNumIndices(); i += 3) {
-            FillTriangle(mesh.GetVertex(mesh.GetIndex(i)).Transform(transform),
-                    mesh.GetVertex(mesh.GetIndex(i+1)).Transform(transform),
-                    mesh.GetVertex(mesh.GetIndex(i+2)).Transform(transform),
+            Matrix4f identity = new Matrix4f().InitIdentity();
+            FillTriangle(mesh.GetVertex(mesh.GetIndex(i)).Transform(transform, identity),
+                    mesh.GetVertex(mesh.GetIndex(i+1)).Transform(transform, identity),
+                    mesh.GetVertex(mesh.GetIndex(i+2)).Transform(transform, identity),
                     texture);
         }
     }
@@ -120,11 +121,12 @@ public class RenderContext extends Bitmap{
     private void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture) {
         Matrix4f screenSpaceTransform = new Matrix4f().InitScreenSpaceTransform(GetWidth()/2.0f, GetHeight()/2.0f);
 
+        Matrix4f identity = new Matrix4f().InitIdentity();
         //v1,v2, and v3 are in NDC space
         //we must still divide by w (PerspectiveDivide()) and then convert to screen space
-        Vertex minYVert = v1.Transform(screenSpaceTransform).PersepctiveDivide();
-        Vertex midYVert = v2.Transform(screenSpaceTransform).PersepctiveDivide();
-        Vertex maxYVert = v3.Transform(screenSpaceTransform).PersepctiveDivide();
+        Vertex minYVert = v1.Transform(screenSpaceTransform, identity).PersepctiveDivide();
+        Vertex midYVert = v2.Transform(screenSpaceTransform, identity).PersepctiveDivide();
+        Vertex maxYVert = v3.Transform(screenSpaceTransform, identity).PersepctiveDivide();
 
         if (minYVert.TriangleArea(maxYVert, midYVert) >= 0) {
             return;
@@ -216,6 +218,8 @@ public class RenderContext extends Bitmap{
         float texCoordYXStep = (right.GetTexCoordY() - left.GetTexCoordY())/xDist;
         float oneOverZXStep = (right.GetOneOverZ() - left.GetOneOverZ())/xDist;
         float depthXStep = (right.GetDepth() - left.GetDepth())/xDist;
+        float lightAmtXStep = gradients.GetLightAmtXStep();
+        float lightAmt = left.GetLightAmt() + lightAmtXStep * xPrestep;
 
         //float texCoordX = left.GetTexCoordX() + gradients.GetTexCoordXXStep() * xPrestep;
         //float texCoordY = left.GetTexCoordY() + gradients.GetTexCoordYXStep() * xPrestep;
@@ -242,8 +246,11 @@ public class RenderContext extends Bitmap{
                 float z = 1.0f / oneOverZ;
                 int srcX = (int) ((texCoordX * z) * (texture.GetWidth() - 1) + 0.5f);
                 int srcY = (int) ((texCoordY * z) * (texture.GetHeight() - 1) + 0.5f);
+
+                CopyPixel(i, j, srcX, srcY, texture, lightAmt);
+
                 try {
-                    CopyPixel(i, j, srcX, srcY, texture);
+                    //CopyPixel(i, j, srcX, srcY, texture);
                 } catch (Exception e) {
                     int stop = 0;
                 }
@@ -253,6 +260,7 @@ public class RenderContext extends Bitmap{
             texCoordX += gradients.GetTexCoordXXStep();
             texCoordY += gradients.GetTexCoordYXStep();
             depth += depthXStep;
+            lightAmt += lightAmtXStep;
             //lerpAmt += lerpStep;
         }
     }
